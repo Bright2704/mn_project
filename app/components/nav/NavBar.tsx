@@ -1,9 +1,17 @@
+"use client"
+
 import Link from "next/link";
 import Image from "next/image";
 import Container from "../container";
 import logo from "../../images/logo_MN1688_rmb.png"; // Correct path to the image
+import { signOut } from 'next-auth/react'
+import { useSession } from 'next-auth/react'
 
 const NavBar = () => {
+
+  const { data: session } = useSession();
+    console.log(session)
+
   return (
     <div
       className="
@@ -28,7 +36,7 @@ const NavBar = () => {
                 />
               </div>
             </Link>
-            <div
+            <ul
               className="
                 flex
                 items-center
@@ -37,10 +45,19 @@ const NavBar = () => {
                 mr-10
               "
             >
-              <div>การแจ้งเตือน</div>
-              <div>ภาษา</div>
-              <div>ผู้ใช้งาน</div>
-            </div>
+              <li> <a href="#" className="cursor-pointer" >การแจ้งเตือน</a> </li>
+              <li> <a href="#" className="cursor-pointer" >ภาษา</a> </li>
+                {!session ? (
+                  <>
+                  <li> <Link href="/login">ลงทะเบียน</Link> </li>
+                  </>
+                ) : (
+                  <>
+                    <li> <a className="bg-gray-500 text-white border py-2 px-3 rounded-md text-lg my-2 cursor-pointer" href="/welcome" > โปรไฟล์ </a> </li>
+                    <li> <a onClick={() => signOut()} className="bg-red-500 text-white border py-2 px-3 rounded-md text-lg my-2 cursor-pointer"> ออกจากระบบ </a> </li>
+                  </>
+                )}
+            </ul>
           </div>
         </Container>
       </div>
