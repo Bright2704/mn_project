@@ -5,18 +5,21 @@ import Link from 'next/link'
 import { FormEvent } from "react";
 import { useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation'
+import generateUserId from '../generateUID';
+import NavBar from '@/components/header'
+import Footer from '@/components/Footer'
 
 function RegisterPage() {
-
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
+    const [phone, setPhone] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
 
     const { data: session } = useSession();
-    if (session) redirect("/welcome")
+    if (session) redirect("/profile")
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
@@ -56,7 +59,7 @@ function RegisterPage() {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    name, email, password
+                    name, email, phone,password
                 })
             });
 
@@ -79,51 +82,103 @@ function RegisterPage() {
     
 
     return (
-        <div className='container mx-auto py-5'>
-            <h3>หน้าลงทะเบียน</h3>
-            <hr className='my-3'></hr>
-            <form onSubmit={handleSubmit}>
-                <input
-                    onChange={(e) => setName(e.target.value)}
-                    className='block bg-gray-300 p-2 my-2 rounded-md'
-                    type="text"
-                    placeholder='Enter your name'
-                />
-                <input
-                    onChange={(e) => setEmail(e.target.value)}
-                    className='block bg-gray-300 p-2 my-2 rounded-md'
-                    type="text"
-                    placeholder='Enter your email'
-                />
-                <input
-                    onChange={(e) => setPassword(e.target.value)}
-                    className='block bg-gray-300 p-2 my-2 rounded-md'
-                    type="password"
-                    placeholder='Enter your password'
-                />
-                <input
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className='block bg-gray-300 p-2 my-2 rounded-md'
-                    type="password"
-                    placeholder='Confirm password'
-                />
-                <button type='submit' className='bg-green-500 p-2 rounded-md text-white'> ลงทะเบียน </button>
+        <>
+        <NavBar/>
+        <div className="flex flex-grow">
+            <div className='hidden md:flex justify-center items-center w-1/2' style={{marginBlock:"5%"}}>
+                <img src='/banner.jpg' alt="banner image" className='' style={{width:"60%"}}></img>
+            </div>
+            <div className='flex flex-col justify-center items-center w-full md:w-1/2'>
+                <div className='shadow-xl px-14 py-14 rounded-lg'>
+                    <p className='text-3xl'> สมัครสมาชิก </p>
+                    <p className='text-4xl font-semibold text-red-600'> MN 1688 EXPRESS </p>
+                    <form onSubmit={handleSubmit} className='mt-8'>
+                    <div className="relative">
+        <label className="block text-sm mb-1">
+            ชื่อ-นามสุกล <span className="text-red-600">*</span>
+        </label>
+        <input
+            onChange={(e) => setName(e.target.value)}
+            className='block bg-gray-300 p-2 rounded-md w-full'
+            type="text"
+            placeholder='ชื่อ-นามสุกล'
+        />
+    </div>
+    
+    <div className="relative mt-3">
+        <label className="block text-sm mb-1">
+            อีเมล <span className="text-red-600">*ใช้ในกรณีที่ลืมรหัสผ่าน</span>
+        </label>
+        <input
+            onChange={(e) => setEmail(e.target.value)}
+            className='block bg-gray-300 p-2 rounded-md w-full'
+            type="text"
+            placeholder='อีเมล'
+        />
+    </div>
+    
+    <div className="relative mt-3">
+        <label className="block text-sm mb-1">
+            เบอร์โทรศัพท์
+        </label>
+        <input
+            onChange={(e) => setPhone(e.target.value)}
+            className='block bg-gray-300 p-2 rounded-md w-full'
+            type="text"
+            placeholder='เบอร์โทรศัพท์'
+        />
+    </div>
+    
+    <div className="relative mt-3">
+        <label className="block text-sm mb-1">
+            รหัสผ่าน <span className="text-red-600">*</span>
+        </label>
+        <input
+            onChange={(e) => setPassword(e.target.value)}
+            className='block bg-gray-300 p-2 rounded-md w-full'
+            type="password"
+            placeholder='รหัสผ่าน'
+        />
+    </div>
+    
+    <div className="relative mt-3">
+        <label className="block text-sm mb-1">
+            ยืนยันรหัสผ่าน <span className="text-red-600">*</span>
+        </label>
+        <input
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            className='block bg-gray-300 p-2 rounded-md w-full'
+            type="password"
+            placeholder='ยืนยันรหัสผ่าน'
+        />
+    </div>
+                        <div className='my-5'>
+                            <p> <input type='checkbox'></input> ท่านรับทราบและตกลงตาม <a href='#' className='text-red-500'> เงื่อนไข </a> และ <a href='#' className='text-red-500'> ข้อตกลงการให้บริการ </a></p>
+                            <p> <input type='checkbox'></input> รับข่าวสารจากทางเรา </p>
+                        </div>
+                        
+                        <button type='submit' className='bg-red-600 p-2 rounded-md text-white w-full'> ลงทะเบียน </button>
 
-                {error && (
-                    <div className='bg-red-500 w-fit text-sm text-white py-1 px-3 rounded-md mt-2'>
-                        {error}
-                    </div>
-                )}
+                        {error && (
+                            <div className='bg-red-500 w-fit text-sm text-white py-1 px-3 rounded-md mt-2'>
+                                {error}
+                            </div>
+                        )}
 
-                {success && (
-                    <div className='bg-green-500 w-fit text-sm text-white py-1 px-3 rounded-md mt-2'>
-                        {success}
-                    </div>
-                )}
-            </form>
-            <hr className='my-3'/>
-            <p>คุณมีบัญชีอยู่แล้วใช่หรือไม่? ไปที่หน้า <Link className='text-blue-500 hover:underline' href="/login">เข้าสู่ระบบ</Link> </p>
-        </div>
+                        {success && (
+                            <div className='bg-green-500 w-fit text-sm text-white py-1 px-3 rounded-md mt-2'>
+                                {success}
+                            </div>
+                        )}
+                    </form>
+                    <hr className='my-3'/>
+                    <p>คุณมีบัญชีอยู่แล้วใช่หรือไม่? ไปที่หน้า <Link className='text-red-500 hover:underline' href="/login">เข้าสู่ระบบ</Link> </p>
+                </div>
+            </div>
+            </div>
+            <Footer/>
+        </>
+        
     )
 }
 

@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
-import { connectMongoDB} from "@/lib/mongodb";
+import { connectMongoDB } from "@/lib/mongodb";
 import User from "@/models/user";
 
 export async function POST(req) {
     try {
+        
         await connectMongoDB();
         const { email } = await req.json();
         const user = await User.findOne({ email }).select("_id");
@@ -12,6 +13,6 @@ export async function POST(req) {
         return NextResponse.json({ user });
 
     } catch(error) {
-        console.log(error)
+        console.log(error);
     }
 }

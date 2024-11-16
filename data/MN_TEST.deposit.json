@@ -1,0 +1,30 @@
+[{
+  "_id": {
+    "$oid": "672f9ea989a6435159385c9e"
+  },
+  "user_id": "MN_0001",
+  "deposit_id": "DEP_0006",
+  "date_deposit": "10/11/2024 00:00",
+  "date_success": "10/11/2024 00:41",
+  "amount": "150",
+  "bank": "gsb",
+  "status": "succeed",
+  "slip": "/storage/slips/DEP_0006.jpg",
+  "six_digits": "777777",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "672f9ee489a6435159385cb9"
+  },
+  "user_id": "MN_0001",
+  "deposit_id": "DEP_0007",
+  "date_deposit": "10/11/2024 00:00",
+  "date_success": "10/11/2024 00:42",
+  "amount": "555",
+  "bank": "ktb",
+  "status": "succeed",
+  "slip": "/storage/slips/DEP_0007.jpg",
+  "six_digits": "546786",
+  "__v": 0
+}]
