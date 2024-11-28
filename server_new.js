@@ -1,14 +1,19 @@
-// server.js
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
 
 const app = express();
-const port = 5000;
+const port = 5001;
+
+// ตั้งค่า CORS ให้รองรับ React บน localhost:3000
+app.use(cors({
+  origin: 'http://localhost:3000',  // URL ที่ React ใช้
+  methods: 'GET, POST, PUT, DELETE',
+  allowedHeaders: 'Content-Type, Authorization',
+}));
 
 // Middleware
-app.use(cors());
 app.use(express.json());
 
 // MongoDB Connection
@@ -30,6 +35,8 @@ const bookBankRoutes = require('./routes/bookBankRoutes'); // Import new routes
 const withdrawRoutes = require('./routes/withdrawRoutes');
 const bookAddressRoutes = require('./routes/bookAddressRoutes');
 const userRoutes = require('./routes/userRoutes');
+const announcementRoutes = require('./routes/announcement');
+const notificationRoutes = require('./routes/notificationRoutes');
 
 // Static files for uploaded images, etc.
 app.use('/storage', express.static(path.join(__dirname, 'public/storage')));
@@ -45,6 +52,11 @@ app.use('/book_bank', bookBankRoutes); // Use new routes
 app.use('/withdraws', withdrawRoutes);
 app.use('/book_address', bookAddressRoutes);
 app.use('/users', userRoutes);
+app.use('/api/announcement', announcementRoutes);
+app.use('/api/notifications', notificationRoutes);
+
+
+
 
 // Error Handling for Unhandled Routes
 app.use((req, res) => res.status(404).send('Not Found'));

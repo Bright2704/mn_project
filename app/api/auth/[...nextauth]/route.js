@@ -10,7 +10,7 @@ const authOptions = {
       name: "credentials",         
       credentials: {},
       async authorize(credentials, req) {           
-        const { email, password } = credentials;
+        const { email, password, lineId } = credentials; // เพิ่ม lineId จาก frontend
 
         try {
           await connectMongoDB();
@@ -24,6 +24,12 @@ const authOptions = {
 
           if (!passwordMatch) {
             return null;
+          }
+
+          // อัปเดต line_id ในกรณีที่ได้รับค่า lineId จาก frontend
+          if (lineId) {
+            user.line_id = lineId;
+            await user.save(); // อัปเดตฐานข้อมูล
           }
 
           return user;  // Return full user object (including user_id)
@@ -41,6 +47,7 @@ const authOptions = {
         token.name = user.name;
         token.email = user.email;
         token.user_id = user.user_id; // Add user_id to the token
+        token.line_id = user.line_id; // เพิ่ม line_id ไปใน token
       }
       
       // Fetch the user's role and user_id from the database if needed
@@ -50,6 +57,7 @@ const authOptions = {
         if (dbUser) {
           token.role = dbUser.role;
           token.user_id = dbUser.user_id;  // Ensure token always has the user_id
+          token.line_id = dbUser.line_id;  // เพิ่ม line_id จากฐานข้อมูล
         }
       } catch (error) {
         console.log("Error fetching user details:", error);
@@ -61,6 +69,7 @@ const authOptions = {
       if (session?.user) {
         session.user.role = token.role;
         session.user.user_id = token.user_id; // Add user_id to session object
+        session.user.line_id = token.line_id; // เพิ่ม line_id ไปใน session
       }
       return session;
     },

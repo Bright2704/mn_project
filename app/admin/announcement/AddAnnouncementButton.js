@@ -1,19 +1,16 @@
-'use client'; // This marks the component as a client component
-
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import EasyMDE from 'easymde'; // นำเข้า EasyMDE
 import { marked } from 'marked'; // นำเข้า Marked.js สำหรับแปลง Markdown
+import { API_URL } from '../apiConfig'; // เปลี่ยนเป็น URL ของ API คุณ
 import 'easymde/dist/easymde.min.css'; // โหลด CSS ของ EasyMDE
-
-const API_URL = 'http://localhost:5001/api/announcement'; // ระบุ URL ของ API ที่ backend
 
 const AnnouncementList = () => {
   const [announcements, setAnnouncements] = useState([]);
-  const [editingId, setEditingId] = useState(null);
-  const [newColor, setNewColor] = useState('#FFF9C4');
-  const [originalContent, setOriginalContent] = useState('');
-  const editorRef = useRef(null);
+  const [editingId, setEditingId] = useState(null); // ID ของประกาศที่กำลังแก้ไข
+  const [newColor, setNewColor] = useState('#FFF9C4'); // สีพื้นหลังสำหรับประกาศใหม่
+  const [originalContent, setOriginalContent] = useState(''); // เนื้อหาเดิม
+  const editorRef = useRef(null); // ใช้สำหรับควบคุม EasyMDE
 
   // ดึงข้อมูลประกาศจาก Backend
   useEffect(() => {
@@ -25,6 +22,7 @@ const AnnouncementList = () => {
         console.error('Error fetching announcements:', error);
       }
     };
+
     fetchAnnouncements();
   }, []);
 
@@ -33,6 +31,7 @@ const AnnouncementList = () => {
       alert('กรุณาบันทึกหรือยกเลิกการแก้ไขก่อนหน้า');
       return;
     }
+
     setEditingId(id);
     setOriginalContent(content);
 
@@ -57,7 +56,7 @@ const AnnouncementList = () => {
   const saveEdit = async (id) => {
     if (!editorRef.current) return;
 
-    const updatedContent = editorRef.current.value();
+    const updatedContent = editorRef.current.value(); // ดึงข้อความจาก EasyMDE
     try {
       await axios.post(`${API_URL}/update/${id}`, { content: updatedContent });
       setAnnouncements((prev) =>
@@ -65,26 +64,27 @@ const AnnouncementList = () => {
           announcement._id === id ? { ...announcement, content: updatedContent } : announcement
         )
       );
-      destroyEditor();
+      destroyEditor(); // ทำลาย EasyMDE
       setEditingId(null);
     } catch (error) {
       console.error('Error saving announcement:', error);
+      alert('ไม่สามารถบันทึกการแก้ไขได้');
     }
   };
 
   const cancelEdit = () => {
-    destroyEditor();
-    setEditingId(null);
+    destroyEditor(); // ทำลาย EasyMDE
+    setEditingId(null); // ยกเลิกโหมดแก้ไข
   };
 
   const destroyEditor = () => {
     if (editorRef.current) {
       try {
-        editorRef.current.toTextArea();
+        editorRef.current.toTextArea(); // ทำลาย Editor
       } catch (error) {
         console.error('Error destroying EasyMDE:', error);
       }
-      editorRef.current = null;
+      editorRef.current = null; // รีเซ็ต Reference
     }
   };
 
@@ -94,6 +94,7 @@ const AnnouncementList = () => {
       setAnnouncements((prev) => prev.filter((announcement) => announcement._id !== id));
     } catch (error) {
       console.error('Error deleting announcement:', error);
+      alert('ไม่สามารถลบประกาศได้');
     }
   };
 
@@ -106,6 +107,7 @@ const AnnouncementList = () => {
       setAnnouncements([...announcements, response.data]);
     } catch (error) {
       console.error('Error adding announcement:', error);
+      alert('ไม่สามารถเพิ่มประกาศได้');
     }
   };
 

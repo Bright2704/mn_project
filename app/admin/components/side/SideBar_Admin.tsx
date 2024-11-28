@@ -201,6 +201,12 @@ const SideBar2 = () => {
             <p className="menu-list" style={{ display: isCollapsed ? 'none' : 'block' , color: pathname === '/admin/announcement' ? 'white':''}}>ประกาศ</p>
           </Link>
         </li>
+        <li className="menu-item" style={{background: pathname === '/admin/notification' ? '#f48ca9':''}}>
+          <Link href="/admin/notification">
+            <Image className="h-full mr-2 hover-icon" src="/line.png" alt="notification image" width={30} height={30} style={{filter: pathname === '/admin/notification' ? 'invert(1)':''}} />
+            <p className="menu-list" style={{ display: isCollapsed ? 'none' : 'block', color: pathname === '/admin/notification' ? 'white' : '', }}>การแจ้งเตือน</p>
+          </Link>
+        </li>
         <li className="menu-item" style={{background: pathname === '/admin/chat' ? '#f48ca9':''}}>
           <Link href="/admin/chat">
           <Image className='h-full mr-2 hover-icon' src="/messages.png" alt='dashboard image' width={30} height={30} style={{filter: pathname === '/admin/chat' ? 'invert(1)':''}}/> 
