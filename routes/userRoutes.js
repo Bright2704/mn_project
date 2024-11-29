@@ -6,7 +6,7 @@ router.get('/:userId', userController.getUserById);
 router.put('/:userId', userController.updateUser);
 
 // ใช้ฟังก์ชัน updateLineId จาก UserController
-router.patch("/update/:userId", authenticate, userController.updateLineId);
+router.patch("/update/:userId", userController.updateLineId);
 router.get('/get-user-id', userController.getUserIdFromSession);
 
 

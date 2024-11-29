@@ -48,7 +48,7 @@ app.use('/balances', balanceRoutes);
 app.use('/book_bank', bookBankRoutes); 
 app.use('/withdraws', withdrawRoutes);
 app.use('/book_address', bookAddressRoutes);
-app.use('/api/users', userRoutes);
+app.use('/users', userRoutes);
 
 app.use('/createpayment', createPaymentRoutes);
 app.use('/tax_info', taxInfoRoutes);

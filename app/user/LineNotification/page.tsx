@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 const LineLoginPage = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -8,6 +9,7 @@ const LineLoginPage = () => {
   const [loading, setLoading] = useState(false);
   const [loginStatus, setLoginStatus] = useState<string>(''); // ใช้สถานะเดียว
   const [userIdFromServer, setUserIdFromServer] = useState<string>(''); // เก็บ user_id ที่ดึงมา
+  const [userData, setUserData] = useState<any>([]);
 
   useEffect(() => {
     if (loading) {
@@ -48,9 +50,10 @@ const LineLoginPage = () => {
     window.liff.getProfile()
       .then((profile: any) => {
         setUserProfile(profile);
+        console.log("line data", profile)
         setIsLoggedIn(true);
         setLoading(false);
-        updateUserLineId(profile);
+        updateUserLineId();
         setLoginStatus('success');  // เมื่อ login สำเร็จ
       })
       .catch((err: any) => {
@@ -60,49 +63,44 @@ const LineLoginPage = () => {
       });
   };
 
-  const updateUserLineId = async (profile) => {
+  const fetchUserData = async () => {
     try {
-      // ดึง User ID จาก session
-      const responseSession = await fetch('http://localhost:5001/api/users/get-user-id');
-      const data = await responseSession.json();
-      
-      if (data.user_id) {
-        // ส่งข้อมูลไปอัปเดตในฐานข้อมูล
-        const response = await fetch(`http://localhost:5001/api/users/update/${data.user_id}`, {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            lineId: profile.userId,  // ใช้ profile.userId ที่ได้จาก LIFF
-          }),
-        });
-
-        if (response.ok) {
-          const updatedUser = await response.json();
-          console.log('User updated:', updatedUser);
-        } else {
-          console.error('Error updating user line ID:', response.status);
+      const response = await axios.get(`http://localhost:5001/users/${userData}`);
+      if (response.status === 200) {
+        const data = response.data;
+        setUserData(data);
+        console.log("fetch User Data", data)
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  };
+  const updateUserLineId = async () => {
+    console.log("Patch");
+    try {
+      // ตรวจสอบว่า userIdFromServer และ userProfile.userId มีค่าที่ถูกต้อง
+      const response = await axios.patch(
+        `http://localhost:5001/users/update/${userIdFromServer}`, // ส่ง userId ผ่าน URL
+        {
+          line_id: userProfile.userId // ส่ง line_id ใน request body
         }
-      } else {
-        console.error('User ID not found in session');
+      );
+  
+      if (response.status === 200) {
+        console.log('User line ID updated successfully:', response.data);
       }
     } catch (error) {
       console.error('Error updating user line ID:', error);
     }
   };
-
+  
   // ฟังก์ชันสำหรับดึง user ID จากเซิร์ฟเวอร์
   const getUserId = async () => {
     try {
-      const response = await fetch('http://localhost:5001/api/users/get-user-id');
+      const response = await fetch('http://localhost:3000/api/auth/session');
       const data = await response.json();
-
-      if (data.user_id) {
-        setUserIdFromServer(data.user_id); // เก็บ user_id ที่ดึงมา
-      } else {
-        console.error('No user ID found');
-      }
+      setUserIdFromServer(data.user.user_id);
+      console.log(data)
     } catch (error) {
       console.error('Error fetching user ID:', error);
     }
@@ -174,7 +172,7 @@ const LineLoginPage = () => {
           <h2>User Profile</h2>
           <p><strong>Display Name:</strong> {userProfile.displayName}</p>
           <p><strong>Status Message:</strong> {userProfile.statusMessage}</p>
-          <p><strong>User ID:</strong> {userProfile.userId}</p>
+          <p><strong>Line User ID:</strong> {userProfile.userId}</p>
           <p><strong>Language:</strong> {userProfile.language}</p>
           <img src={userProfile.pictureUrl} alt="User Profile" />
           <button
@@ -195,6 +193,20 @@ const LineLoginPage = () => {
 
       {/* ปุ่มสำหรับเรียกใช้ get-user-id */}
       <button
+        onClick={fetchUserData}
+        style={{
+          backgroundColor: '#007bff',
+          color: 'white',
+          padding: '10px 20px',
+          border: 'none',
+          borderRadius: '5px',
+          cursor: 'pointer',
+          marginTop: '20px',
+        }}
+      >
+        Get User By ID
+      </button>
+      <button
         onClick={getUserId}
         style={{
           backgroundColor: '#007bff',
@@ -208,6 +220,21 @@ const LineLoginPage = () => {
       >
         Get User ID
       </button>
+      <button
+        onClick={() => { updateUserLineId(); }}
+        style={{
+          backgroundColor: '#007bff',
+          color: 'white',
+          padding: '10px 20px',
+          border: 'none',
+          borderRadius: '5px',
+          cursor: 'pointer',
+          marginTop: '20px',
+        }}
+      >
+        Update Line Id
+      </button>
+
 
       {userIdFromServer && (
         <div style={{ marginTop: '20px' }}>

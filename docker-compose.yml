@@ -3,7 +3,7 @@ services:
   mongo: 
     image: mongo:7.0
     ports:
-      - 8888:27017
+      - 27017:27017
     volumes:
       - ./mongodata:/data/db
 

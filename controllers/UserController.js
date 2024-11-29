@@ -66,24 +66,17 @@ exports.updateUser = async (req, res) => {
 
 exports.updateLineId = async (req, res) => {
   try {
-    const session = await getSession({ req });
+    const userId = req.params.userId; // ดึง userId จาก path parameter
+    const { line_id } = req.body;  // ดึง line_id จาก body
 
-    // ถ้า session ไม่มี หรือไม่ได้ล็อกอิน
-    if (!session) {
-      return res.status(401).json({ message: "User not logged in" });
-    }
+    console.log('User ID:', userId);  // ตรวจสอบว่า userId ถูกต้อง
+    console.log('Line ID:', line_id);  // ตรวจสอบว่า lineId ถูกต้อง
 
-    // ใช้ user_id จาก session
-    const { lineId } = req.body;
-    const userId = session.user.user_id; // ใช้ session user_id ในการค้นหาผู้ใช้
-
-    console.log('User ID from session:', userId);  // ตรวจสอบค่า user_id ที่ใช้ในการค้นหาผู้ใช้
-
-    // ค้นหาผู้ใช้โดยใช้ user_id
+    // ค้นหาผู้ใช้โดยใช้ user_id จาก params และอัปเดต line_id
     const updatedUser = await User.findOneAndUpdate(
-      { user_id: userId },  // ใช้ user_id ในการค้นหาผู้ใช้
-      { line_id: lineId },  // อัปเดต line_id
-      { new: true }
+      { user_id: userId },  // ใช้ user_id จาก params
+      { $set: { line_id: line_id } },  // อัปเดต line_id
+      { new: true }  // คืนค่าผู้ใช้ที่อัปเดตแล้ว
     );
 
     // ถ้าไม่พบผู้ใช้
@@ -97,6 +90,7 @@ exports.updateLineId = async (req, res) => {
     res.status(500).json({ message: "Error updating line ID" });
   }
 };
+
 
 
 // controllers/UserController.js
