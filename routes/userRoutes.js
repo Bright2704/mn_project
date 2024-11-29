@@ -1,9 +1,13 @@
-// routes/userRoutes.js
 const express = require('express');
 const router = express.Router();
-const UserController = require('../controllers/UserController');
+const userController = require('../controllers/UserController');  // นำเข้า UserController
 
-router.get('/:userId', UserController.getUserById);
-router.put('/:userId', UserController.updateUser);
+router.get('/:userId', userController.getUserById);
+router.put('/:userId', userController.updateUser);
+
+// ใช้ฟังก์ชัน updateLineId จาก UserController
+router.patch("/update/:userId", authenticate, userController.updateLineId);
+router.get('/get-user-id', userController.getUserIdFromSession);
+
 
 module.exports = router;

@@ -5,7 +5,7 @@ const cors = require('cors');
 const path = require('path');
 
 const app = express();
-const port = 5000;
+const port = 5001;
 
 // Middleware
 app.use(cors());
@@ -32,26 +32,29 @@ const bookAddressRoutes = require('./routes/bookAddressRoutes');
 const userRoutes = require('./routes/userRoutes');
 const createPaymentRoutes = require('./routes/createPaymentRoutes');
 const taxInfoRoutes = require('./routes/taxInfoRoutes');
+const announcementRoutes = require('./routes/announcementRoutes'); 
+const notificationRoutes = require('./routes/notificationRoutes');
+
 
 // Static files for uploaded images, etc.
 app.use('/storage', express.static(path.join(__dirname, 'public/storage')));
 
-// Use Routes
 app.use('/orders', orderRoutes);
 app.use('/items', itemRoutes);
 app.use('/deposits', depositRoutes);
 app.use('/lots', lotRoutes);
 app.use('/tracking', trackingRoutes);
 app.use('/balances', balanceRoutes);
-app.use('/book_bank', bookBankRoutes); // Use new routes
+app.use('/book_bank', bookBankRoutes); 
 app.use('/withdraws', withdrawRoutes);
 app.use('/book_address', bookAddressRoutes);
-app.use('/users', userRoutes);
+app.use('/api/users', userRoutes);
+
 app.use('/createpayment', createPaymentRoutes);
 app.use('/tax_info', taxInfoRoutes);
+app.use('/api/announcement', announcementRoutes); 
+app.use('/api/notification', notificationRoutes);
 
-// Error Handling for Unhandled Routes
 app.use((req, res) => res.status(404).send('Not Found'));
 
-// Start Server
 app.listen(port, () => console.log(`Server started on http://localhost:${port}`));

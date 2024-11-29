@@ -32,6 +32,16 @@ function LoginPage() {
           setError("อีเมลหรือรหัสผ่านไม่ถูกต้อง")
         }
 
+        const userRes = await fetch("/api/getUserId");
+        const userData = await userRes.json();
+        
+        if (userData.user_id) {
+          console.log("Logged in user ID:", userData.user_id);
+          // สามารถใช้ user_id ที่ได้ที่นี่ เช่น เก็บไว้ใน state หรือใช้ในการทำงานอื่นๆ
+        } else {
+          console.log("User not logged in");
+        }
+
         // router.replace("welcome")
 
       } catch(error) {
